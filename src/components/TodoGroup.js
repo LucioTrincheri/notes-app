@@ -9,12 +9,9 @@ class TodoGroup extends Component {
 		return (
 			<div className={css.groupContainer}>
 				<h1 className={css.groupTitle}>{this.props.todoGroup.title}</h1>
-				<AddTodo
-					groupId={this.props.todoGroup.id}
-					addTodo={this.props.addTodo}
-				/>
+				<AddTodo groupId={this.props.todoGroup.id} addTodo={this.props.addTodo} />
 				{this.props.todoGroup.todos.map(todo => (
-					<Todo todo={todo} />
+					<Todo todo={todo} delTodo={this.props.delTodo} groupId={this.props.todoGroup.id} markComplete={this.props.markComplete} />
 				))}
 			</div>
 		);

@@ -32,7 +32,7 @@ class App extends Component {
 					{
 						id: 3,
 						title: "Grupo 2 - Todo 1",
-						completed: false
+						completed: true
 					},
 					{
 						id: 4,
@@ -75,36 +75,52 @@ class App extends Component {
 		});
 	};
 
+	// Change Todo status
+	markComplete = (id, groupId) => {
+		this.setState({
+			group: this.state.group.map(todoGroup => {
+				if (todoGroup.id === groupId) {
+					todoGroup.todos = todoGroup.todos.map(todo => {
+						if (todo.id === id) {
+							todo.completed = !todo.completed;
+						}
+						return todo;
+					});
+				}
+				return todoGroup;
+			})
+		});
+	};
+
+	delTodo = (id, groupId) => {
+		this.setState({
+			group: this.state.group.map(todoGroup => {
+				if (todoGroup.id === groupId) {
+					todoGroup.todos = todoGroup.todos.filter(todo => todo.id !== id);
+				}
+				return todoGroup;
+			})
+		});
+	};
+
 	render() {
 		return (
-			/*
-			<div className="App">
-				<div className="container">
-					// TODO Agregar Header
-					{this.state.group.map(todoGroup => (
-						<TodoGroup addTodo={this.addTodo} todoGroup={todoGroup} />
-					))}
-					<AddTodoGroup />
-				</div>
-			</div>
-			*/
-			//! No funca y no tengo la mas remota idea de por que.
 			<Router>
-				<div className="App">
+				<div className='App'>
 					<Header />
 					<Route
-						path="/"
+						path='/'
 						exact
 						render={props => (
 							<React.Fragment>
 								{this.state.group.map(todoGroup => (
-									<TodoGroup addTodo={this.addTodo} todoGroup={todoGroup} />
+									<TodoGroup addTodo={this.addTodo} todoGroup={todoGroup} markComplete={this.markComplete} delTodo={this.delTodo} />
 								))}
 								<AddTodoGroup addTodoGroup={this.addTodoGroup} />
 							</React.Fragment>
 						)}
 					/>
-					<Route path="/about" component={About} />
+					<Route path='/about' component={About} />
 				</div>
 			</Router>
 		);

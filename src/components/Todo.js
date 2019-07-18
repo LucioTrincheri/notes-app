@@ -17,14 +17,13 @@ export class Todo extends Component {
 			<div className={style.todoContainer}>
 				<p>
 					<input
-						type="checkbox"
-						// TODO onChange={this.props.markComplete.bind(this, id)}
+						type='checkbox'
+						className={style.completeBtn}
+						checked={completed}
+						onChange={this.props.markComplete.bind(this, id, this.props.groupId)}
 					/>{" "}
-					{title}
-					<button
-						className={style.delBtnStyle}
-						// TODO onClick={this.props.delTodo.bind(this, id)}
-					>
+					<label className={style.completeLabel}>{title}</label>
+					<button className={style.delBtnStyle} onClick={this.props.delTodo.bind(this, id, this.props.groupId)}>
 						Delete
 					</button>
 				</p>
