@@ -50,7 +50,7 @@ class App extends Component {
 	//Agregar nuevo grupo de notas
 	addTodoGroup = title => {
 		const newGroup = {
-			id: this.nextGroupID++,
+			id: ++this.nextGroupID,
 			title: title,
 			todos: []
 		};
@@ -64,7 +64,7 @@ class App extends Component {
 			group: this.state.group.map(todoGroup => {
 				if (todoGroup.id === id) {
 					const newTodo = {
-						id: this.nextTodoID++,
+						id: ++this.nextTodoID,
 						title: title,
 						completed: false
 					};
@@ -103,6 +103,12 @@ class App extends Component {
 		});
 	};
 
+	delTodoGroup = id => {
+		this.setState({
+			group: this.state.group.filter(todoGroup => todoGroup.id !== id)
+		});
+	};
+
 	render() {
 		return (
 			<Router>
@@ -114,7 +120,13 @@ class App extends Component {
 						render={props => (
 							<React.Fragment>
 								{this.state.group.map(todoGroup => (
-									<TodoGroup addTodo={this.addTodo} todoGroup={todoGroup} markComplete={this.markComplete} delTodo={this.delTodo} />
+									<TodoGroup
+										delTodoGroup={this.delTodoGroup}
+										addTodo={this.addTodo}
+										todoGroup={todoGroup}
+										markComplete={this.markComplete}
+										delTodo={this.delTodo}
+									/>
 								))}
 								<AddTodoGroup addTodoGroup={this.addTodoGroup} />
 							</React.Fragment>
