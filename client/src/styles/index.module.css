@@ -27,6 +27,9 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .addTodo {
@@ -52,7 +55,9 @@
 }
 
 .delBtnStyle {
-  display: inline-flexbox;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
   position: relative;
   right: 0.1em;
   background: rgba(255, 60, 56, 0.8);
