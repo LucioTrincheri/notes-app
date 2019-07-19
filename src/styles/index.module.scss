@@ -21,6 +21,11 @@
 	border: 2px solid #ccc;
 }
 
+.container {
+	display: flex;
+	align-items: center;
+}
+
 //Buttons
 .addTodo {
 	display: flex;
@@ -32,6 +37,10 @@
 	border-bottom: 0.1rem solid rgba(54, 54, 54, 0.726);
 }
 
+.addTodoGroup {
+	display: inline-block;
+}
+
 .completeBtn:checked + .completeLabel {
 	font-style: italic;
 	color: gray;
@@ -40,10 +49,12 @@
 
 .delBtnStyle {
 	display: inline-flexbox;
+	position: relative;
+	right: 0.1em;
 	background: rgba(255, 60, 56, 0.8);
 	color: white;
 	border: none;
-	margin: 0 0.1em;
+	margin: 0 3em;
 	margin-right: 0.1em;
 	padding: 0.4em 0.8em;
 	border-radius: 0.4em;
@@ -62,6 +73,7 @@
 
 //Text
 .groupTitle {
+	display: inline-table;
 	margin: 0.5rem 0.5rem;
 	margin-bottom: 0.25rem;
 	padding-left: 0.2rem;

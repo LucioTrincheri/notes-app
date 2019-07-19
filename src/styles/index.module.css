@@ -20,6 +20,15 @@
   border: 2px solid #ccc;
 }
 
+.container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
 .addTodo {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -32,6 +41,10 @@
   border-bottom: 0.1rem solid rgba(54, 54, 54, 0.726);
 }
 
+.addTodoGroup {
+  display: inline-block;
+}
+
 .completeBtn:checked + .completeLabel {
   font-style: italic;
   color: gray;
@@ -40,10 +53,12 @@
 
 .delBtnStyle {
   display: inline-flexbox;
+  position: relative;
+  right: 0.1em;
   background: rgba(255, 60, 56, 0.8);
   color: white;
   border: none;
-  margin: 0 0.1em;
+  margin: 0 3em;
   margin-right: 0.1em;
   padding: 0.4em 0.8em;
   border-radius: 0.4em;
@@ -61,6 +76,7 @@
 }
 
 .groupTitle {
+  display: inline-table;
   margin: 0.5rem 0.5rem;
   margin-bottom: 0.25rem;
   padding-left: 0.2rem;
