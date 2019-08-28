@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import style from "../styles/index.module.css";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import style from '../styles/index.module.css';
 
 export class Todo extends Component {
 	render() {
@@ -12,10 +12,17 @@ export class Todo extends Component {
 						type='checkbox'
 						className={style.completeBtn}
 						checked={completed}
-						onChange={this.props.markComplete.bind(this, id, this.props.groupId)}
-					/>{" "}
+						onChange={this.props.markComplete.bind(
+							this,
+							id,
+							this.props.groupId
+						)}
+					/>{' '}
 					<label className={style.completeLabel}>{title}</label>
-					<button className={style.delBtnStyle} onClick={this.props.delTodo.bind(this, id, this.props.groupId)}>
+					<button
+						className={style.delBtnStyle}
+						onClick={this.props.delTodo.bind(this, id, this.props.groupId)}
+					>
 						Delete
 					</button>
 				</p>
@@ -28,7 +35,7 @@ export class Todo extends Component {
 Todo.propTypes = {
 	todo: PropTypes.object.isRequired,
 	delTodo: PropTypes.func.isRequired,
-	groupId: PropTypes.number.isRequired,
+	groupId: PropTypes.string.isRequired,
 	markComplete: PropTypes.func.isRequired
 };
 
