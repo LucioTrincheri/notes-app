@@ -1,56 +1,44 @@
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import Header from "./components/layout/Header";
-import "./App.css";
-import TodoGroup from "./components/TodoGroup";
-import AddTodoGroup from "./components/AddTodoGroup";
-import About from "./components/pages/About";
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import nanoid from 'nanoid';
+import Header from './components/layout/Header';
+import './App.css';
+import TodoGroup from './components/TodoGroup';
+import AddTodoGroup from './components/AddTodoGroup';
+import About from './components/pages/About';
+import Login from './components/pages/Login';
+import Register from './components/pages/Register';
 
 class App extends Component {
 	state = {
-		group: [
-			{
-				id: 1,
-				title: "Grupo 1",
-				todos: [
-					{
-						id: 1,
-						title: "Grupo 1 - Todo 1",
-						completed: false
-					},
-					{
-						id: 2,
-						title: "Grupo 1 - Todo 2",
-						completed: false
-					}
-				]
-			},
-			{
-				id: 2,
-				title: "Grupo 2",
-				todos: [
-					{
-						id: 3,
-						title: "Grupo 2 - Todo 1",
-						completed: true
-					},
-					{
-						id: 4,
-						title: "Grupo 2 - Todo 2",
-						completed: false
-					}
-				]
-			}
-		]
+		loggedIn: false,
+		group: []
 	};
-
-	nextGroupID = 2;
-	nextTodoID = 4;
+	/*
+	componentDidMount() {
+		if (this.state.loggedIn) {
+			fetch('/api/data', {
+				method: 'GET'
+			})
+				.then(res => {
+					console.log(res);
+					this.setState({ group: res });
+				})
+				.catch(err => {
+					console.error(err);
+					alert('Error logging in please try again');
+				});
+		} else {
+		}
+	}*/
 
 	//Agregar nuevo grupo de notas
 	addTodoGroup = title => {
+		if (title === '') {
+			return;
+		}
 		const newGroup = {
-			id: ++this.nextGroupID,
+			id: nanoid(),
 			title: title,
 			todos: []
 		};
@@ -60,11 +48,14 @@ class App extends Component {
 	};
 	// Agregar nueva nota
 	addTodo = (title, id) => {
+		if (title === '') {
+			return;
+		}
 		this.setState({
 			group: this.state.group.map(todoGroup => {
 				if (todoGroup.id === id) {
 					const newTodo = {
-						id: ++this.nextTodoID,
+						id: nanoid(),
 						title: title,
 						completed: false
 					};
@@ -133,6 +124,8 @@ class App extends Component {
 						)}
 					/>
 					<Route path='/about' component={About} />
+					<Route path='/login' component={Login} />
+					<Route path='/register' component={Register} />
 				</div>
 			</Router>
 		);
