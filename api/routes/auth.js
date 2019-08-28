@@ -1,0 +1,61 @@
+const router = require('express').Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const { registerValidation, loginValidation } = require('../validation');
+
+// Register
+router.post('/register', async (req, res) => {
+	// Validation
+	const { error } = registerValidation(req.body);
+	if (error) {
+		return res.status(400).send(error.details[0].message);
+	}
+
+	// Check if the user exists
+	const emailExists = await User.findOne({ email: req.body.email });
+	if (emailExists) {
+		return res.status(400).send('User already registered with this email');
+	}
+
+	// Hash passwords
+	const salt = await bcrypt.genSalt(10);
+	const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+	// Create new User
+	const user = new User({
+		name: req.body.name,
+		email: req.body.email,
+		password: hashedPassword
+	});
+
+	// Save user
+	try {
+		const savedUser = await user.save();
+		res.status(200).send();
+	} catch (err) {
+		res.status(400).send(err);
+	}
+});
+
+// Login
+router.post('/login', async (req, res) => {
+	// Validation
+	const { error } = loginValidation(req.body);
+	if (error) return res.status(400).send(error.details[0].message);
+
+	// Check if the user exists
+	const user = await User.findOne({ email: req.body.email });
+	if (!user) return res.status(400).send('Email or password is invalid');
+
+	// Check if pass is correct
+	const validPass = await bcrypt.compare(user.password, req.body.password);
+	if (validPass) return res.status(400).send('Email or password is invalid');
+
+	// Create and assing a token
+	const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+	res.header('auth-token', token);
+	res.status(200).send('Logged in');
+});
+
+module.exports = router;
