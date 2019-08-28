@@ -2,8 +2,14 @@
 
 # dependencies
 /api/.env
+/api/node_modules
+api/node_modules
 /client/node_modules
-/client/package-lock.json 
+client/node_modules
+/client/package-lock.json
+/client/package-lock
+client/package-lock.json
+client/package-lock
 /.pnp
 .pnp.js
 
