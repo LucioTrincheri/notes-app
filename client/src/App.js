@@ -100,11 +100,18 @@ class App extends Component {
 		});
 	};
 
+	handleLogIn = () => {
+		this.setState(prevState => ({
+			...prevState,
+			loggedIn: true
+		}));
+	};
+
 	render() {
 		return (
 			<Router>
 				<div className='App'>
-					<Header />
+					<Header loggedIn={this.state.loggedIn} />
 					<Route
 						path='/'
 						exact
@@ -124,7 +131,10 @@ class App extends Component {
 						)}
 					/>
 					<Route path='/about' component={About} />
-					<Route path='/login' component={Login} />
+					<Route
+						path='/login'
+						render={props => <Login handleLogIn={this.handleLogIn} />}
+					/>
 					<Route path='/register' component={Register} />
 				</div>
 			</Router>
