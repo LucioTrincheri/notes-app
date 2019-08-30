@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
 	// Save user
 	try {
 		const savedUser = await user.save();
-		res.status(200).send();
+		res.status(200).send('User created successfully');
 	} catch (err) {
 		res.status(400).send(err);
 	}
@@ -41,16 +41,20 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
 	// Validation
-	const { error } = loginValidation(req.body);
+	const { error } = loginValidation({
+		email: req.body.email,
+		password: req.body.password
+	});
+
 	if (error) return res.status(400).send(error.details[0].message);
 
 	// Check if the user exists
 	const user = await User.findOne({ email: req.body.email });
-	if (!user) return res.status(400).send('Email or password is invalid');
+	if (!user) return res.status(400).send('Bad Request - Email doest exist');
 
 	// Check if pass is correct
-	const validPass = await bcrypt.compare(user.password, req.body.password);
-	if (validPass) return res.status(400).send('Email or password is invalid');
+	const validPass = await bcrypt.compare(req.body.password, user.password);
+	if (!validPass) return res.status(400).send('Email or password is invalid');
 
 	// Create and assing a token
 	const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);

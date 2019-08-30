@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const todoSchema = new Schema({
+	id: String,
 	title: String,
 	completed: Boolean
 });
 
 const todoGroupSchema = new Schema({
+	id: String,
 	title: String,
 	todos: [todoSchema]
 });
