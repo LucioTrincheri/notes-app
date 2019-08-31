@@ -7,12 +7,14 @@ const verify = require('./verify');
 // Get the user data
 router.get('/', verify, async (req, res) => {
 	const user = await User.findById(req.user._id);
+	//console.log(user.data);
 	res.status(200).send(user.data);
 });
 
 // Create Group
 router.post('/createGroup', verify, async (req, res) => {
 	const user = await User.findById(req.user._id);
+	//console.log(req.body);
 	const newGroup = new todoGroup({
 		id: req.body.id,
 		title: req.body.title,
@@ -23,8 +25,8 @@ router.post('/createGroup', verify, async (req, res) => {
 		if (err) {
 			res.status(400).send(err);
 		} else {
-			// TODO Falta agregar envio de informacion
-			res.status(200).send('Group create');
+			// TODO Falta agregar envio de feedback sobre si se pudo guardar los datos
+			res.status(200).send('Group created');
 		}
 	});
 });
