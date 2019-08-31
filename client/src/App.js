@@ -17,18 +17,20 @@ class App extends Component {
 	/*
 	componentDidMount() {
 		if (this.state.loggedIn) {
+			const head = new Headers();
 			fetch('/api/data', {
-				method: 'GET'
+				method: 'GET',
+				headers: head
 			})
 				.then(res => {
+					res.json();
 					console.log(res);
 					this.setState({ group: res });
 				})
 				.catch(err => {
 					console.error(err);
-					alert('Error logging in please try again');
+					alert('Error fetching data, plese log in again');
 				});
-		} else {
 		}
 	}*/
 
@@ -45,7 +47,33 @@ class App extends Component {
 		this.setState({
 			group: [...this.state.group, newGroup]
 		});
+
+		const headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		headers.append('Accept', 'application/json');
+
+		fetch('/api/data/createGroup', {
+			headers: headers,
+			method: 'POST',
+			body: JSON.stringify(newGroup)
+		})
+			.then(res => {
+				if (!res.status === 200) {
+					// TODO borrar el grupoTodo creado ya que no se guardo
+					// TODO en la base de datos
+					console.log('Error al crear el grupoTodo');
+					console.log(res);
+				} else {
+					console.log('Grupo creado correctamente');
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				console.error(err);
+				alert('Server failed to process data');
+			});
 	};
+
 	// Agregar nueva nota
 	addTodo = (title, id) => {
 		if (title === '') {
@@ -82,7 +110,14 @@ class App extends Component {
 			})
 		});
 	};
-
+	/**
+	 * Borra el Todo.
+	 * Itera por todos los grupos y filtra aquellos que
+	 * posean la misma id que el elemento a borrar.
+	 *
+	 * @param {string} id       Id del elemento a borrar.
+	 * @param {string} groupId  Id del grupo donde se encuentra ese elemento.
+	 */
 	delTodo = (id, groupId) => {
 		this.setState({
 			group: this.state.group.map(todoGroup => {
@@ -94,17 +129,45 @@ class App extends Component {
 		});
 	};
 
+	/**
+	 * Borra el grupo de Todos.
+	 * Filtra aquellos que posean la id del elemento a borrar.
+	 *
+	 * @param {string} id       Id del grupo a borrar.
+	 */
 	delTodoGroup = id => {
 		this.setState({
 			group: this.state.group.filter(todoGroup => todoGroup.id !== id)
 		});
 	};
 
+	/**
+	 * Cambia el estado de loggedIn.
+	 */
 	handleLogIn = () => {
 		this.setState(prevState => ({
 			...prevState,
 			loggedIn: true
 		}));
+
+		fetch('/api/data', {
+			method: 'GET'
+		})
+			.then(res => {
+				if (!res.status == 200) {
+					alert('Error fetching data, plese log in again');
+				}
+				return res.json();
+			})
+			.then(data => {
+				console.log(data);
+				this.setState({ group: data });
+			})
+			.catch(err => {
+				console.log(err);
+				console.error(err);
+				alert('Server failed to process data');
+			});
 	};
 
 	render() {
