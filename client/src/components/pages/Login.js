@@ -22,19 +22,25 @@ export class Login extends Component {
 
 	onSubmit = event => {
 		event.preventDefault();
+		var headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		headers.append('Accept', 'application/json');
 		fetch('/api/user/login', {
+			headers: headers,
 			method: 'POST',
+			credentials: 'include',
 			body: JSON.stringify(this.state),
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		}).then(res => {
 			if (res.status === 200) {
+				console.log(res);
 				this.props.handleLogIn();
 				this.setState({ email: '', password: '', redirect: true });
 			} else {
 				// TODO "Datos erroneos, intente nuevamente"
-				console.log(res.statusText);
+				console.log('Failure when auth');
 			}
 		});
 	};
