@@ -58,8 +58,13 @@ router.post('/login', async (req, res) => {
 
 	// Create and assing a token
 	const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-	res.header('auth-token', token);
-	res.status(200).send('Logged in');
+
+	// Ya no se ni que hacer help pls.
+	//res.header('Authorization', token);
+	res
+		.status(200)
+		.cookie('token', token, { maxAge: 8640000 })
+		.send('Logged in');
 });
 
 module.exports = router;
