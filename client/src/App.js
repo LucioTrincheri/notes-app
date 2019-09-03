@@ -14,25 +14,6 @@ class App extends Component {
 		loggedIn: false,
 		group: []
 	};
-	/*
-	componentDidMount() {
-		if (this.state.loggedIn) {
-			const head = new Headers();
-			fetch('/api/data', {
-				method: 'GET',
-				headers: head
-			})
-				.then(res => {
-					res.json();
-					console.log(res);
-					this.setState({ group: res });
-				})
-				.catch(err => {
-					console.error(err);
-					alert('Error fetching data, plese log in again');
-				});
-		}
-	}*/
 
 	//Agregar nuevo grupo de notas
 	addTodoGroup = title => {
@@ -79,37 +60,82 @@ class App extends Component {
 		if (title === '') {
 			return;
 		}
+		const newTodo = {
+			id: nanoid(),
+			title: title,
+			completed: false
+		};
 		this.setState({
 			group: this.state.group.map(todoGroup => {
 				if (todoGroup.id === id) {
-					const newTodo = {
-						id: nanoid(),
-						title: title,
-						completed: false
-					};
 					todoGroup.todos = [...todoGroup.todos, newTodo];
 				}
 				return todoGroup;
 			})
 		});
+
+		newTodo.groupId = id;
+		const headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		headers.append('Accept', 'application/json');
+
+		fetch('/api/data/createTodo', {
+			headers: headers,
+			method: 'POST',
+			body: JSON.stringify(newTodo)
+		})
+			.then(res => {
+				if (!res.status === 200) {
+					// TODO borrar el Todo creado ya que no se guardo en la base de datos
+					console.log('Error al crear el Todo');
+					console.log(res);
+				} else {
+					console.log('Todo creado correctamente');
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				console.error(err);
+				alert('Server failed to process data');
+			});
 	};
 
-	// Change Todo status
-	markComplete = (id, groupId) => {
+	/**
+	 * Borra el grupo de Todos.
+	 * Filtra aquellos que posean la id del elemento a borrar.
+	 *
+	 * @param {string} id       Id del grupo a borrar.
+	 */
+	delTodoGroup = id => {
 		this.setState({
-			group: this.state.group.map(todoGroup => {
-				if (todoGroup.id === groupId) {
-					todoGroup.todos = todoGroup.todos.map(todo => {
-						if (todo.id === id) {
-							todo.completed = !todo.completed;
-						}
-						return todo;
-					});
-				}
-				return todoGroup;
-			})
+			group: this.state.group.filter(todoGroup => todoGroup.id !== id)
 		});
+
+		const headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		headers.append('Accept', 'application/json');
+
+		fetch('/api/data/deleteGroup', {
+			headers: headers,
+			method: 'POST',
+			body: JSON.stringify({ id })
+		})
+			.then(res => {
+				if (!res.status === 200) {
+					// TODO borrar el Todo creado ya que no se guardo en la base de datos
+					console.log('Error al eliminar el TodoGroup');
+					console.log(res);
+				} else {
+					console.log('TodoGroup eliminado correctamente');
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				console.error(err);
+				alert('Server failed to process data');
+			});
 	};
+
 	/**
 	 * Borra el Todo.
 	 * Itera por todos los grupos y filtra aquellos que
@@ -127,18 +153,71 @@ class App extends Component {
 				return todoGroup;
 			})
 		});
+
+		const headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		headers.append('Accept', 'application/json');
+
+		fetch('/api/data/deleteTodo', {
+			headers: headers,
+			method: 'POST',
+			body: JSON.stringify({ id, groupId })
+		})
+			.then(res => {
+				if (!res.status === 200) {
+					// TODO borrar el Todo creado ya que no se guardo en la base de datos
+					console.log('Error al eliminar el Todo');
+					console.log(res);
+				} else {
+					console.log('Todo eliminado correctamente');
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				console.error(err);
+				alert('Server failed to process data');
+			});
 	};
 
-	/**
-	 * Borra el grupo de Todos.
-	 * Filtra aquellos que posean la id del elemento a borrar.
-	 *
-	 * @param {string} id       Id del grupo a borrar.
-	 */
-	delTodoGroup = id => {
+	// Change Todo status
+	markComplete = (id, groupId) => {
 		this.setState({
-			group: this.state.group.filter(todoGroup => todoGroup.id !== id)
+			group: this.state.group.map(todoGroup => {
+				if (todoGroup.id === groupId) {
+					todoGroup.todos = todoGroup.todos.map(todo => {
+						if (todo.id === id) {
+							todo.completed = !todo.completed;
+						}
+						return todo;
+					});
+				}
+				return todoGroup;
+			})
 		});
+
+		const headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		headers.append('Accept', 'application/json');
+
+		fetch('/api/data/markCompleteTodo', {
+			headers: headers,
+			method: 'POST',
+			body: JSON.stringify({ id, groupId })
+		})
+			.then(res => {
+				if (!res.status === 200) {
+					// TODO borrar el Todo creado ya que no se guardo en la base de datos
+					console.log('Error al modificar estado del Todo');
+					console.log(res);
+				} else {
+					console.log('Estado del Todo cambiado correctamente');
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				console.error(err);
+				alert('Server failed to process data');
+			});
 	};
 
 	/**
@@ -154,7 +233,7 @@ class App extends Component {
 			method: 'GET'
 		})
 			.then(res => {
-				if (!res.status == 200) {
+				if (!res.status === 200) {
 					alert('Error fetching data, plese log in again');
 				}
 				return res.json();
