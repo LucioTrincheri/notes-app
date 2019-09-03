@@ -29,10 +29,7 @@ export class Login extends Component {
 			headers: headers,
 			method: 'POST',
 			credentials: 'include',
-			body: JSON.stringify(this.state),
-			headers: {
-				'Content-Type': 'application/json'
-			}
+			body: JSON.stringify(this.state)
 		}).then(res => {
 			if (res.status === 200) {
 				console.log(res);
