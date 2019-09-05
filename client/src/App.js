@@ -15,6 +15,32 @@ class App extends Component {
 		group: []
 	};
 
+	handleFetch = (route, req_method, req_body) => {
+		const headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		headers.append('Accept', 'application/json');
+
+		fetch(route, {
+			headers: headers,
+			method: req_method,
+			body: JSON.stringify(req_body)
+		})
+			.then(res => {
+				if (!res.status === 200) {
+					// TODO Tratar la operacion fallida y los datos
+					console.log('Error dentro de handleFetch');
+					console.log(res);
+				} else {
+					console.log('handleFetch funciona correctamente');
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				console.error(err);
+				alert('Server failed to process data');
+			});
+	};
+
 	//Agregar nuevo grupo de notas
 	addTodoGroup = title => {
 		if (title === '') {
@@ -28,31 +54,7 @@ class App extends Component {
 		this.setState({
 			group: [...this.state.group, newGroup]
 		});
-
-		const headers = new Headers();
-		headers.append('Content-Type', 'application/json');
-		headers.append('Accept', 'application/json');
-
-		fetch('/api/data/createGroup', {
-			headers: headers,
-			method: 'POST',
-			body: JSON.stringify(newGroup)
-		})
-			.then(res => {
-				if (!res.status === 200) {
-					// TODO borrar el grupoTodo creado ya que no se guardo
-					// TODO en la base de datos
-					console.log('Error al crear el grupoTodo');
-					console.log(res);
-				} else {
-					console.log('Grupo creado correctamente');
-				}
-			})
-			.catch(err => {
-				console.log(err);
-				console.error(err);
-				alert('Server failed to process data');
-			});
+		this.handleFetch('/api/data/createGroup', 'POST', newGroup);
 	};
 
 	// Agregar nueva nota
@@ -75,29 +77,7 @@ class App extends Component {
 		});
 
 		newTodo.groupId = id;
-		const headers = new Headers();
-		headers.append('Content-Type', 'application/json');
-		headers.append('Accept', 'application/json');
-
-		fetch('/api/data/createTodo', {
-			headers: headers,
-			method: 'POST',
-			body: JSON.stringify(newTodo)
-		})
-			.then(res => {
-				if (!res.status === 200) {
-					// TODO borrar el Todo creado ya que no se guardo en la base de datos
-					console.log('Error al crear el Todo');
-					console.log(res);
-				} else {
-					console.log('Todo creado correctamente');
-				}
-			})
-			.catch(err => {
-				console.log(err);
-				console.error(err);
-				alert('Server failed to process data');
-			});
+		this.handleFetch('/api/data/createTodo', 'POST', newTodo);
 	};
 
 	/**
@@ -110,30 +90,7 @@ class App extends Component {
 		this.setState({
 			group: this.state.group.filter(todoGroup => todoGroup.id !== id)
 		});
-
-		const headers = new Headers();
-		headers.append('Content-Type', 'application/json');
-		headers.append('Accept', 'application/json');
-
-		fetch('/api/data/deleteGroup', {
-			headers: headers,
-			method: 'POST',
-			body: JSON.stringify({ id })
-		})
-			.then(res => {
-				if (!res.status === 200) {
-					// TODO borrar el Todo creado ya que no se guardo en la base de datos
-					console.log('Error al eliminar el TodoGroup');
-					console.log(res);
-				} else {
-					console.log('TodoGroup eliminado correctamente');
-				}
-			})
-			.catch(err => {
-				console.log(err);
-				console.error(err);
-				alert('Server failed to process data');
-			});
+		this.handleFetch('/api/data/deleteGroup', 'POST', { id });
 	};
 
 	/**
@@ -153,30 +110,7 @@ class App extends Component {
 				return todoGroup;
 			})
 		});
-
-		const headers = new Headers();
-		headers.append('Content-Type', 'application/json');
-		headers.append('Accept', 'application/json');
-
-		fetch('/api/data/deleteTodo', {
-			headers: headers,
-			method: 'POST',
-			body: JSON.stringify({ id, groupId })
-		})
-			.then(res => {
-				if (!res.status === 200) {
-					// TODO borrar el Todo creado ya que no se guardo en la base de datos
-					console.log('Error al eliminar el Todo');
-					console.log(res);
-				} else {
-					console.log('Todo eliminado correctamente');
-				}
-			})
-			.catch(err => {
-				console.log(err);
-				console.error(err);
-				alert('Server failed to process data');
-			});
+		this.handleFetch('/api/data/deleteTodo', 'POST', { id, groupId });
 	};
 
 	// Change Todo status
@@ -194,41 +128,10 @@ class App extends Component {
 				return todoGroup;
 			})
 		});
-
-		const headers = new Headers();
-		headers.append('Content-Type', 'application/json');
-		headers.append('Accept', 'application/json');
-
-		fetch('/api/data/markCompleteTodo', {
-			headers: headers,
-			method: 'POST',
-			body: JSON.stringify({ id, groupId })
-		})
-			.then(res => {
-				if (!res.status === 200) {
-					// TODO borrar el Todo creado ya que no se guardo en la base de datos
-					console.log('Error al modificar estado del Todo');
-					console.log(res);
-				} else {
-					console.log('Estado del Todo cambiado correctamente');
-				}
-			})
-			.catch(err => {
-				console.log(err);
-				console.error(err);
-				alert('Server failed to process data');
-			});
+		this.handleFetch('/api/data/markCompleteTodo', 'POST', { id, groupId });
 	};
 
-	/**
-	 * Cambia el estado de loggedIn.
-	 */
-	handleLogIn = () => {
-		this.setState(prevState => ({
-			...prevState,
-			loggedIn: true
-		}));
-
+	fetchData = () => {
 		fetch('/api/data', {
 			method: 'GET'
 		})
@@ -247,6 +150,16 @@ class App extends Component {
 				console.error(err);
 				alert('Server failed to process data');
 			});
+	};
+	/**
+	 * Cambia el estado de loggedIn.
+	 */
+	handleLogIn = () => {
+		this.setState(prevState => ({
+			...prevState,
+			loggedIn: true
+		}));
+		this.fetchData();
 	};
 
 	render() {
